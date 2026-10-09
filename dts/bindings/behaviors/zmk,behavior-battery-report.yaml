@@ -1,0 +1,5 @@
+description: Types the current battery level and voltage, e.g. "87% 4012mV"
+
+compatible: "zmk,behavior-battery-report"
+
+include: zero_param.yaml

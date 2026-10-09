@@ -1,10 +1,14 @@
 /*
- * BT60 (CKP, nRF52840) ZMK keymap.
+ * Polarity Works BT60 V2 (CKP controller, nRF52840), ANSI layout. ZMK v0.3 board: bt60_v2.
  *
  * Reconstructed 2026-10-10 from the firmware on the board (dumps/2026-10-10_CURRENT.UF2).
  * Bindings are decoded from the compiled keymap table, so this matches the board exactly;
  * layer names and comments come from archive/2025-05-28_bt60.keymap.
  * The board build includes an encoder binding (volume); it is left out because there is no knob.
+ *
+ * ZMK Studio: hold Fn and tap U to unlock the keyboard for editing at https://zmk.studio
+ * Right Ctrl is a SYS key (no longer Ctrl): hold it, then Backspace = bootloader, \ = next Bluetooth device,
+ * right Shift = type battery level. Enter is spare.
  */
 
 #include <behaviors.dtsi>
@@ -16,30 +20,45 @@
 #define BASE  0
 #define RAISE 1
 #define NAV   2
+#define SYS   3
 
 / {
+    chosen {
+        zmk,physical-layout = &layout_60_ansi;
+    };
+
+    behaviors {
+        // Types the battery level and voltage, e.g. "87% 4012mV" (src/behavior_battery_report.c).
+        bat_report: battery_report {
+            compatible = "zmk,behavior-battery-report";
+            #binding-cells = <0>;
+            display-name = "Battery report";
+        };
+    };
+
+
     keymap {
         compatible = "zmk,keymap";
 
-        // Base (QWERTY). Esc on tap, ` on hold. Hold Space for NAV, Fn for RAISE.
+        // Base (QWERTY). Esc on tap, ` on hold. Hold Space for NAV, Fn for RAISE, right Ctrl for SYS.
         default_layer {
             bindings = <
                 &mt GRAVE ESC &kp N1   &kp N2   &kp N3        &kp N4   &kp N5    &kp N6     &kp N7    &kp N8    &kp N9  &kp N0   &kp MINUS &kp EQUAL &kp BSPC
                 &kp TAB       &kp Q    &kp W    &kp E         &kp R    &kp T     &kp Y      &kp U     &kp I     &kp O   &kp P    &kp LBKT  &kp RBKT  &kp BSLH
                 &kp LCTRL     &kp A    &kp S    &kp D         &kp F    &kp G     &kp H      &kp J     &kp K     &kp L   &kp SEMI &kp SQT   &kp RET
                 &kp LSHFT     &kp Z    &kp X    &kp C         &kp V    &kp B     &kp N      &kp M     &kp COMMA &kp DOT &kp FSLH &kp RSHFT
-                &kp LCTRL     &kp LALT &kp LGUI &lt NAV SPACE &kp RALT &mo RAISE &kp C_MENU &kp RCTRL
+                &kp LCTRL     &kp LALT &kp LGUI &lt NAV SPACE &kp RALT &mo RAISE &kp C_MENU &mo SYS
             >;
         };
 
-        // RAISE (hold Fn): F-keys, Bluetooth, media, backlight/RGB, Fn+Enter = bootloader.
+        // RAISE (hold Fn): F-keys, Bluetooth, media, backlight/RGB, Fn+U = unlock ZMK Studio.
         raise {
             bindings = <
                 &bt BT_CLR &kp F1       &kp F2       &kp F3     &kp F4     &kp F5     &kp F6     &kp F7     &kp F8  &kp F9  &kp F10   &kp F11    &kp F12         &kp DEL
-                &trans     &trans       &kp UP       &trans     &trans     &trans     &trans     &trans     &kp INS &trans  &kp PSCRN &kp SLCK   &kp PAUSE_BREAK &rgb_ug RGB_TOG
-                &kp CAPS   &kp LEFT     &kp DOWN     &kp RIGHT  &trans     &trans     &trans     &trans     &trans  &trans  &kp HOME  &kp PG_UP  &bootloader
+                &trans     &trans       &kp UP       &trans     &trans     &trans     &trans     &studio_unlock &kp INS &trans  &kp PSCRN &kp SLCK   &kp PAUSE_BREAK &rgb_ug RGB_TOG
+                &kp CAPS   &kp LEFT     &kp DOWN     &kp RIGHT  &trans     &trans     &trans     &trans     &trans  &trans  &kp HOME  &kp PG_UP  &trans
                 &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_MUTE &bl BL_INC &bl BL_DEC &trans     &trans     &trans  &kp END &kp PG_DN &bl BL_TOG
-                &bt BT_PRV &bt BT_NXT   &trans       &trans     &trans     &trans     &sys_reset &bt BT_CLR
+                &bt BT_PRV &bt BT_NXT   &trans       &trans     &trans     &trans     &trans     &bt BT_CLR
             >;
         };
 
@@ -51,6 +70,18 @@
                 &trans        &trans &trans &trans &trans &trans &kp PG_DN    &kp LEFT     &kp DOWN &kp RIGHT     &kp END  &trans  &trans
                 &trans        &trans &trans &trans &trans &trans &kp LG(LBKT) &kp LG(RBKT) &trans   &trans        &trans   &trans
                 &trans        &trans &trans &trans &trans &trans &trans       &trans
+            >;
+        };
+
+        // SYS (hold right Ctrl): Backspace = bootloader, \ = next Bluetooth device,
+        // Enter = nothing (spare), right Shift = type battery level.
+        sys {
+            bindings = <
+                &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &bootloader
+                &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &bt BT_NXT
+                &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &none
+                &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &bat_report
+                &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans
             >;
         };
     };

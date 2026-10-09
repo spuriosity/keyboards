@@ -1,26 +1,70 @@
 # BT60 keymap
 
-CKP **BT60** (60%, nRF52840, wireless), ZMK firmware. Bootloader: Adafruit UF2 (board ID `nRF52840-rotr-v1`),
-which mounts as a drive called `CKP`.
+Polarity Works **BT60 V2** (60% ANSI, CKP controller, nRF52840, wireless), ZMK firmware. ZMK board: `bt60_v2`.
+Bootloader: Adafruit UF2 (board ID `nRF52840-rotr-v1`), which mounts as a drive called `CKP`.
 
 | File | What it is |
 |---|---|
-| `bt60.keymap` | The keymap, reconstructed from the firmware on the board on 2026-10-10. Matches the board exactly. |
+| `config/bt60_v2.keymap` | The keymap, reconstructed from the board's firmware on 2026-10-10, plus `Fn`+`U` to unlock ZMK Studio and a SYS layer on right Ctrl. |
+| `config/bt60_v2.conf` | Build options: ZMK Studio, deep sleep after 15 min, lights off when idle. |
+| `src/`, `dts/`, `zephyr/`, `CMakeLists.txt`, `Kconfig` | Custom `&bat_report` behavior that types the battery level. |
+| `tools/keylog/` | Browser key logger (`python3 server.py 8459`, open `http://localhost:8459`). |
+| `build.sh` / `flash.sh` / `log.sh` | Build firmware, flash it, read the debug log. |
+| `firmware/` | Built `.uf2` files. |
 | `dumps/` | `CURRENT.UF2` and `INFO_UF2.TXT` copied off the board's bootloader drive on 2026-10-10. |
 | `archive/` | Older copies: an older `CURRENT.UF2` backup (byte-identical to the 2026 dump) and a 2025 keymap edit with syntax errors that was never built. |
 
-The firmware is ZMK on Zephyr 3.0 (2022 era). There's no ZMK Studio, so the keymap is compiled in.
+The original firmware (in `dumps/`) is ZMK on Zephyr 3.0 (2022 era), without ZMK Studio. New builds use ZMK v0.3 with Studio.
+
+## Editing the keymap visually (ZMK Studio)
+
+Once the Studio firmware is on the board:
+
+1. Plug the BT60 in over USB.
+2. Open <https://zmk.studio> in Arc (it needs a Chromium browser for Web Serial) and connect to the BT60.
+3. Hold `Fn` and tap `U` to unlock the keyboard for editing.
+4. Change keys and click **Save**. Changes apply immediately and survive restarts. No rebuild needed.
+
+Studio stores its edits on the keyboard, not in `config/bt60_v2.keymap`. To make the file the source of truth again,
+use **Restore Stock Settings** in Studio after flashing a new build.
+
+## Building and flashing
+
+The shared build environment lives in `../workspace` (ZMK v0.3, Zephyr 3.5, Zephyr SDK). Set it up once with
+`./setup-workspace.sh` (it lives here but builds the shared `../workspace`, which git ignores).
+
+```
+./build.sh            # Studio firmware  -> firmware/bt60_v2-studio.uf2
+./flash.sh            # then hold right Ctrl + Backspace (or double-tap reset); copies the .uf2 onto the CKP drive
+                      # also the way out of bootloader mode: no keys work there
+./build.sh debug      # USB-logging firmware for diagnostics (no Studio)
+./flash.sh firmware/bt60_v2-debug.uf2 && ./log.sh
+./flash.sh dumps/2026-10-10_CURRENT.UF2   # put the original 2022 firmware back
+```
+
+## Battery
+
+The board has a battery voltage sensor (resistor divider into the nRF52840's ADC, `vbatt` in ZMK's `ckp.dtsi`).
+Hold right Ctrl + tap right Shift to type the level and voltage. A charged cell reads about 3700-4200 mV; on USB
+the charger can make a missing or dead cell read high, so test unplugged over Bluetooth. ZMK also reports the level
+to paired hosts over Bluetooth. First reading (2026-10-10, on USB): `94% 4148mV`.
+
+The stock BT60 V2 config never sleeps and turns the underglow on at start-up, which drains the battery.
+`config/bt60_v2.conf` turns on deep sleep (15 min idle, any key wakes) and idle light-off.
 
 ## Layers
 
 - **Base**: QWERTY. Esc on tap, `` ` `` on hold (top-left). Bottom row: Ctrl, Alt, Cmd, Space, RAlt, Fn, Menu, RCtrl.
-- **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`Enter` enters the bootloader.
+- **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`U` unlocks ZMK Studio.
+- **SYS** (hold right Ctrl, which is no longer a Ctrl key): Backspace = bootloader, `\` = next Bluetooth device,
+  right Shift = type the battery level (e.g. `94% 4148mV`). Enter is spare.
 - **NAV** (hold Space): arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
   `Cmd+`` ` on Tab, `Cmd+[` / `Cmd+]` on `N` / `M`.
 
 ## Reading the firmware back
 
-1. `Fn`+`Enter` (or double-tap reset). A drive called `CKP` mounts.
+1. Hold right Ctrl + Backspace (or double-tap reset). A drive called `CKP` mounts.
+   (The original 2022 firmware uses `Fn`+`Enter` instead.)
 2. Copy `CURRENT.UF2` off it. Nothing on the board changes.
 3. Eject the drive and press reset once to go back to normal.
 
