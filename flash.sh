@@ -1,6 +1,7 @@
 #!/bin/zsh
 # Flash a .uf2 to the BT60: waits for its bootloader drive (hold right Ctrl + Backspace, or double-tap reset), checks it's the
-# BT60's bootloader, then copies the file. The board reboots into the new firmware by itself.
+# BT60's bootloader, backs up the board's current firmware to dumps/, then copies the file.
+# The board reboots into the new firmware by itself.
 #   ./flash.sh                         firmware/bt60_v2-studio.uf2
 #   ./flash.sh firmware/bt60_v2-debug.uf2
 #   ./flash.sh dumps/2026-10-10_CURRENT.UF2   (put the 2022 firmware back)
@@ -14,6 +15,10 @@ for i in {1..600}; do
 done
 [[ -f /Volumes/CKP/INFO_UF2.TXT ]] || { echo "Timed out"; exit 2; }
 grep -q 'Board-ID: nRF52840-rotr-v1' /Volumes/CKP/INFO_UF2.TXT || { echo "Drive CKP is not the BT60 bootloader:"; cat /Volumes/CKP/INFO_UF2.TXT; exit 3; }
+# Back up what's on the board first (read-only copy of its flash)
+mkdir -p "$HERE/dumps"
+BACKUP="$HERE/dumps/$(date +%Y-%m-%d_%H%M)_CURRENT.UF2"
+cp -X /Volumes/CKP/CURRENT.UF2 "$BACKUP" && echo "Backed up the board's current firmware to dumps/$(basename $BACKUP)"
 echo "Copying $(basename $UF2)..."
 cp -X "$UF2" /Volumes/CKP/ 2>/dev/null || true   # the drive disconnects mid-copy when the board reboots; that's normal
 sleep 3

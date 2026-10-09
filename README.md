@@ -38,8 +38,10 @@ The shared build environment lives in `../workspace` (ZMK v0.3, Zephyr 3.5, Zeph
 ./flash.sh            # then hold right Ctrl + Backspace (or double-tap reset); copies the .uf2 onto the CKP drive
                       # also the way out of bootloader mode: no keys work there
 ./build.sh debug      # USB-logging firmware for diagnostics (no Studio)
+./build.sh battest    # battery discharge test (see Battery below)
 ./flash.sh firmware/bt60_v2-debug.uf2 && ./log.sh
 ./flash.sh dumps/2026-10-10_CURRENT.UF2   # put the original 2022 firmware back
+./flash.sh firmware/2026-10-10_3edb05c_bt60_v2-studio.uf2   # the build before the battery test (git tag pre-battest)
 ```
 
 ## Battery
@@ -48,6 +50,16 @@ The board has a battery voltage sensor (resistor divider into the nRF52840's ADC
 Hold right Ctrl + tap right Shift to type the level and voltage. A charged cell reads about 3700-4200 mV; on USB
 the charger can make a missing or dead cell read high, so test unplugged over Bluetooth. ZMK also reports the level
 to paired hosts over Bluetooth. First reading (2026-10-10, on USB): `94% 4148mV`.
+
+### Discharge test (battery health)
+
+The board has no fuel gauge, only a voltage sensor, so health shows up in the discharge curve.
+
+1. `./build.sh battest && ./flash.sh firmware/bt60_v2-battest.uf2`, then charge fully.
+2. Unplug. A fresh log starts: a voltage reading every 10 minutes, saved to flash after each one (it survives the
+   battery running flat). Deep sleep and idle light-off are off and the underglow stays on as a steady load.
+3. Plug back in (logging stops) and hold right Ctrl + tap Enter in a text box to type the log.
+4. Flash the normal firmware back. The log stays in flash, and right Ctrl + Enter still types it.
 
 The stock BT60 V2 config never sleeps and turns the underglow on at start-up, which drains the battery.
 `config/bt60_v2.conf` turns on deep sleep (15 min idle, any key wakes) and idle light-off.

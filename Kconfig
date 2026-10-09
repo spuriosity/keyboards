@@ -2,3 +2,17 @@ config ZMK_BEHAVIOR_BATTERY_REPORT
     bool
     default y
     depends on DT_HAS_ZMK_BEHAVIOR_BATTERY_REPORT_ENABLED
+
+config ZMK_BEHAVIOR_BATTERY_LOG
+    bool
+    default y
+    depends on DT_HAS_ZMK_BEHAVIOR_BATTERY_LOG_ENABLED
+
+config BT60_BATTERY_LOG
+    bool "Log battery voltage to flash while unplugged"
+    depends on ZMK_BEHAVIOR_BATTERY_LOG && ZMK_USB
+
+config BT60_BATTERY_LOG_INTERVAL_MIN
+    int "Minutes between battery log samples"
+    default 10
+    depends on BT60_BATTERY_LOG

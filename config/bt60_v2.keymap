@@ -8,7 +8,7 @@
  *
  * ZMK Studio: hold Fn and tap U to unlock the keyboard for editing at https://zmk.studio
  * Right Ctrl is a SYS key (no longer Ctrl): hold it, then 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
- * right Shift = type battery level. Enter is spare.
+ * right Shift = type battery level, Enter = type the battery discharge log.
  */
 
 #include <behaviors.dtsi>
@@ -33,6 +33,13 @@
             compatible = "zmk,behavior-battery-report";
             #binding-cells = <0>;
             display-name = "Battery report";
+        };
+
+        // Types the saved battery discharge log (src/battery_log.c).
+        bat_log: battery_log {
+            compatible = "zmk,behavior-battery-log";
+            #binding-cells = <0>;
+            display-name = "Battery log";
         };
     };
 
@@ -74,12 +81,12 @@
         };
 
         // SYS (hold right Ctrl): 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
-        // Enter = nothing (spare), right Shift = type battery level.
+        // Enter = type the battery discharge log, right Shift = type battery level.
         sys {
             bindings = <
                 &trans       &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bootloader
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bt BT_NXT
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &none
+                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bat_log
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bat_report
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
             >;
