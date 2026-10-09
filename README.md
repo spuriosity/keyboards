@@ -6,6 +6,7 @@ splitkb.com **Aurora Lily58 rev1**, Elite-C (ATmega32u4) controllers, QMK firmwa
 |---|---|
 | `lily58.json` | The working keymap. Import into [QMK Configurator](https://config.qmk.fm/#/splitkb/aurora/lily58/rev1/LAYOUT), edit, export back over this file. |
 | `archive/` | Original 2023 Configurator exports, kept unchanged. |
+| `firmware/` | Exact `.hex` files that were flashed to the board, named by date and the commit they were built from. |
 | `tools/key-reader/` | Browser page that records what each physical key sends. Run `python3 server.py 8458` and open `http://localhost:8458/keytester.html`; results land in `results.json`. |
 
 ## Base
@@ -37,8 +38,9 @@ QWERTY sits at layer 1, below the symbol/nav layers, so those still work on top 
 2. QMK Toolbox: open the `.hex`, tick **Auto-Flash**.
 3. Press reset on the USB-connected half, then move the cable and do the other half.
 
-The Elite-C's Atmel DFU bootloader has its security bit set, so firmware can't be read back off the board.
-Keep this folder as the source of truth.
+The firmware flashed before Oct 2026 had the Atmel DFU security bit set, so it couldn't be read back.
+Flashing with `dfu-programmer` (erase, flash, launch) leaves the bit clear, and the Oct 2026 flash read back
+and verified fine, so `dfu-programmer atmega32u4 read --bin` should now work. Keep this folder as the source of truth anyway.
 
 ## Board vs. this file (Oct 2026)
 
