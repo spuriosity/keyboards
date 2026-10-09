@@ -56,7 +56,8 @@ The stock BT60 V2 config never sleeps and turns the underglow on at start-up, wh
 
 - **Base**: QWERTY. Esc on tap, `` ` `` on hold (top-left). Bottom row: Ctrl, Alt, Cmd, Space, RAlt, Fn, Menu, RCtrl.
 - **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`U` unlocks ZMK Studio.
-- **SYS** (hold right Ctrl, which is no longer a Ctrl key): Backspace = bootloader, `\` = next Bluetooth device,
+- **SYS** (hold right Ctrl, which is no longer a Ctrl key): `1`-`5` = Bluetooth device 1-5, Backspace = bootloader,
+  `\` = next Bluetooth device,
   right Shift = type the battery level (e.g. `94% 4148mV`). Enter is spare.
 - **NAV** (hold Space): arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
   `Cmd+`` ` on Tab, `Cmd+[` / `Cmd+]` on `N` / `M`.
