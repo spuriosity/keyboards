@@ -1,0 +1,5 @@
+UF2 Bootloader 0.4.0-41-g103bd32-dirty lib/nrfx (v2.0.0) lib/tinyusb (0.9.0-22-g7cdeed54) lib/uf2 (remotes/origin/configupdate-9-gadbb8c7)
+Model: CKP
+Board-ID: nRF52840-rotr-v1
+SoftDevice: S140 version 6.1.1
+Date: Oct 26 2021
