@@ -1,0 +1,3 @@
+tools/key-reader/results.json
+*.hex
+.DS_Store

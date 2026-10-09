@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lily58 Key Reader</title>
+<style>
+:root{--bg:#f6f5f2;--fg:#1d1d1b;--muted:#6b6a66;--key:#fff;--line:#d7d4cc;--target:#2f6fdf;--ok:#1f8a4c;--okbg:#e3f3e9;--diff:#b55d00;--diffbg:#fdf0dc;--skip:#9a9890;--skipbg:#eeede8;--hold:#7a3fd1;--holdbg:#f1e9fd;--perm:#c0262d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b1a;--fg:#ecebe6;--muted:#a3a19a;--key:#272725;--line:#3b3a37;--okbg:#18321f;--diffbg:#3a2a12;--skipbg:#2b2b29;--hold:#b28cf0;--holdbg:#2d2340;--perm:#f07178}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px 16px}
+main{max-width:980px;margin:0 auto}h1{font-size:20px;margin:0 0 4px}.sub{color:var(--muted);margin:0 0 16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{border:1px solid var(--line);background:var(--key);color:var(--fg);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.tabs button.on{border-color:var(--target);box-shadow:inset 0 0 0 1px var(--target)}
+.prompt{background:var(--key);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.prompt b{color:var(--target)}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.controls button{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.board{position:relative;width:100%;aspect-ratio:16.5/5.4;margin-bottom:16px}
+.k{position:absolute;width:5.6%;height:17%;border:1px solid var(--line);background:var(--key);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;text-align:center;line-height:1.15;padding:2px;cursor:pointer;overflow:hidden}
+.k .got{font-weight:600;font-size:12px}.k .exp{color:var(--muted);font-size:10px}
+.k.target{border:2px solid var(--target);box-shadow:0 0 0 3px color-mix(in srgb,var(--target) 25%,transparent)}
+.k.ok{background:var(--okbg);border-color:var(--ok)}.k.diff{background:var(--diffbg);border-color:var(--diff)}.k.skip{background:var(--skipbg);color:var(--skip)}
+.k.hold{border:2px dashed var(--hold);background:var(--holdbg)}.k .tag{position:absolute;top:2px;left:0;right:0;font-size:8.5px;font-weight:700;white-space:nowrap}.k .tag.temp{color:var(--hold)}.k .tag.perm{color:var(--perm)}.k .holdlbl{font-size:9px;font-weight:700;color:var(--hold);letter-spacing:.04em}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-bottom:16px}.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left}th{color:var(--muted);font-weight:500}
+code{font:12px ui-monospace,Menlo,monospace}
+</style></head><body><main>
+<h1>Lily58 key reader</h1>
+<p class="sub">Click this page once so it has focus, then press the highlighted key on the Lily58. Each result is compared with the 18 July 2023 keymap. <span id="sync" style="font-weight:600"></span></p>
+<div class="tabs" id="tabs"></div>
+<div class="prompt" id="prompt"></div>
+<div class="board" id="board"></div>
+<div class="legend"><span style="--c:var(--ok)">matches file</span><span style="--c:var(--diff)">differs from file</span><span style="--c:var(--skip)">skipped (keep file value)</span><span style="--c:var(--hold)">layer key to hold</span><span style="--c:var(--hold)">tag: temporary layer (hold / one-shot)</span><span style="--c:var(--perm)">tag: permanent layer change (toggle / switch / default)</span></div>
+<p class="sub" style="margin-top:-6px">A layer key sends nothing to the computer, so the reader can't see it. If a key sends nothing but changes layer, press <b>Other…</b> and write what it did, e.g. <i>"toggles layer 2"</i> or <i>"layer 1 while held"</i>.</p>
+<h2 style="font-size:16px">Differences so far</h2>
+<table id="diffs"><thead><tr><th>Layer</th><th>Key #</th><th>File</th><th>Board</th></tr></thead><tbody></tbody></table>
+</main>
+<script>
+const POS = [[0, 0.5], [1, 0.375], [2, 0.125], [3, 0], [4, 0.125], [5, 0.25], [10.5, 0.25], [11.5, 0.125], [12.5, 0], [13.5, 0.125], [14.5, 0.375], [15.5, 0.5], [0, 1.5], [1, 1.375], [2, 1.125], [3, 1], [4, 1.125], [5, 1.25], [10.5, 1.25], [11.5, 1.125], [12.5, 1], [13.5, 1.125], [14.5, 1.375], [15.5, 1.5], [0, 2.5], [1, 2.375], [2, 2.125], [3, 2], [4, 2.125], [5, 2.25], [10.5, 2.25], [11.5, 2.125], [12.5, 2], [13.5, 2.125], [14.5, 2.375], [15.5, 2.5], [0, 3.5], [1, 3.375], [2, 3.125], [3, 3], [4, 3.125], [5, 3.25], [6, 2.75], [9.5, 2.75], [10.5, 3.25], [11.5, 3.125], [12.5, 3], [13.5, 3.125], [14.5, 3.375], [15.5, 3.5], [2.5, 4.15], [3.5, 4.15], [4.5, 4.25], [6, 4.25], [9.5, 4.25], [11, 4.25], [12, 4.15], [13, 4.15]];
+const FILE = [["KC_ESC", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5", "KC_6", "KC_7", "KC_8", "KC_9", "KC_0", "KC_BSPC", "KC_TAB", "KC_Q", "KC_W", "KC_F", "KC_P", "KC_B", "KC_J", "KC_L", "KC_U", "KC_Y", "KC_SCLN", "KC_QUOT", "LCTL_T(KC_BSPC)", "KC_A", "KC_R", "KC_S", "KC_T", "KC_G", "KC_M", "KC_N", "KC_E", "KC_I", "KC_O", "KC_ENT", "KC_LSFT", "KC_Z", "KC_X", "KC_C", "KC_D", "KC_V", "KC_ESC", "KC_GRV", "KC_K", "KC_H", "KC_COMM", "KC_DOT", "KC_SLSH", "KC_RSFT", "KC_LALT", "KC_LGUI", "LT(1,KC_BSPC)", "KC_LGUI", "LT(2,KC_ENT)", "LT(2,KC_SPC)", "KC_BSPC", "KC_EQL"], ["KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_F1", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_GRV", "KC_EXLM", "KC_AT", "KC_HASH", "KC_DLR", "KC_PERC", "KC_CIRC", "KC_AMPR", "KC_ASTR", "KC_LPRN", "KC_RPRN", "KC_PIPE", "KC_TRNS", "KC_EQL", "KC_MINS", "KC_PLUS", "KC_LCBR", "KC_RCBR", "KC_TRNS", "KC_TRNS", "KC_LBRC", "KC_RBRC", "KC_SCLN", "KC_COLN", "KC_BSLS", "KC_PIPE", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "MO(3)", "KC_TRNS", "KC_TRNS"], ["KC_ESC", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_GRV", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_PGUP", "LALT(KC_LEFT)", "KC_UP", "LALT(KC_RGHT)", "KC_NO", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_PGDN", "KC_LEFT", "KC_DOWN", "KC_RGHT", "KC_NO", "KC_NO", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_NO", "KC_HOME", "KC_NO", "KC_END", "KC_NO", "KC_BSLS", "KC_TRNS", "KC_TRNS", "MO(3)", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS"], ["KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "RGB_TOG", "RGB_HUI", "RGB_SAI", "RGB_VAI", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "KC_NO", "RGB_MOD", "RGB_HUD", "RGB_SAD", "RGB_VAD", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS", "KC_TRNS"]];
+const LAYER_HELP = [
+  "<b>Layer 0 (base):</b> just tap each key. For thumb keys, a quick tap is enough.",
+  "<b>Layer 1:</b> hold the left inner thumb key (Backspace / layer 1) and tap each key. When the highlighted key <i>is</i> the one you're holding, press <b>Skip</b>.",
+  "<b>Layer 2 (SpaceFn):</b> hold the Space thumb key and tap each key. Press <b>Skip</b> for the key you're holding.",
+  "<b>Layer 3 (RGB):</b> hold both layer keys and tap each key. Lighting keys send nothing to the computer, so press <b>No output</b> and watch the LEDs instead."
+];
+const HOLD = {1: {keys: [52], text: "Hold the purple key"}, 2: {keys: [54, 55], text: "Hold <i>either</i> purple key"}, 3: {keys: [52, 55], text: "Hold <i>both</i> purple keys together"}};
+// Momentary keys only change layer while held; the rest change it until something changes it back.
+const LAYER_KINDS = {LT: ["hold", "temp", "tap = key, hold = layer"], MO: ["hold", "temp", "layer while held"], OSL: ["1×", "temp", "next key only"], TT: ["hold/2×", "temp", "hold = momentary, tap twice = toggle"], TG: ["toggle", "perm", "stays on until pressed again"], TO: ["switch", "perm", "switches and stays"], DF: ["default", "perm", "changes the base layer"], PDF: ["default", "perm", "changes the base layer, survives unplugging"]};
+function layerInfo(code){ const m = code && code.match(/^(LT|MO|OSL|TT|TG|TO|DF|PDF)\((\d+)/); if (!m) return null; const [label, kind, help] = LAYER_KINDS[m[1]]; return {text: `L${m[2]} ${label}`, kind, help}; }
+const CODE = {Enter:"KC_ENT",Escape:"KC_ESC",Backspace:"KC_BSPC",Tab:"KC_TAB",Space:"KC_SPC",Minus:"KC_MINS",Equal:"KC_EQL",BracketLeft:"KC_LBRC",BracketRight:"KC_RBRC",Backslash:"KC_BSLS",IntlBackslash:"KC_NUBS",Semicolon:"KC_SCLN",Quote:"KC_QUOT",Backquote:"KC_GRV",Comma:"KC_COMM",Period:"KC_DOT",Slash:"KC_SLSH",CapsLock:"KC_CAPS",PrintScreen:"KC_PSCR",ScrollLock:"KC_SCRL",Pause:"KC_PAUS",Insert:"KC_INS",Home:"KC_HOME",PageUp:"KC_PGUP",Delete:"KC_DEL",End:"KC_END",PageDown:"KC_PGDN",ArrowRight:"KC_RGHT",ArrowLeft:"KC_LEFT",ArrowDown:"KC_DOWN",ArrowUp:"KC_UP",NumLock:"KC_NUM",ContextMenu:"KC_APP",ShiftLeft:"KC_LSFT",ControlLeft:"KC_LCTL",AltLeft:"KC_LALT",MetaLeft:"KC_LGUI",ShiftRight:"KC_RSFT",ControlRight:"KC_RCTL",AltRight:"KC_RALT",MetaRight:"KC_RGUI",AudioVolumeMute:"KC_MUTE",AudioVolumeUp:"KC_VOLU",AudioVolumeDown:"KC_VOLD",MediaTrackNext:"KC_MNXT",MediaTrackPrevious:"KC_MPRV",MediaPlayPause:"KC_MPLY",MediaStop:"KC_MSTP",NumpadEnter:"KC_PENT"};
+for (let c=65;c<=90;c++) CODE["Key"+String.fromCharCode(c)]="KC_"+String.fromCharCode(c);
+for (let d=0;d<=9;d++) CODE["Digit"+d]="KC_"+d;
+for (let f=1;f<=24;f++) CODE["F"+f]="KC_F"+f;
+for (let d=0;d<=9;d++) CODE["Numpad"+d]="KC_P"+d;
+const SHIFTED = {KC_1:"KC_EXLM",KC_2:"KC_AT",KC_3:"KC_HASH",KC_4:"KC_DLR",KC_5:"KC_PERC",KC_6:"KC_CIRC",KC_7:"KC_AMPR",KC_8:"KC_ASTR",KC_9:"KC_LPRN",KC_0:"KC_RPRN",KC_MINS:"KC_UNDS",KC_EQL:"KC_PLUS",KC_LBRC:"KC_LCBR",KC_RBRC:"KC_RCBR",KC_BSLS:"KC_PIPE",KC_SCLN:"KC_COLN",KC_QUOT:"KC_DQUO",KC_GRV:"KC_TILD",KC_COMM:"KC_LT",KC_DOT:"KC_GT",KC_SLSH:"KC_QUES"};
+const MODS = {ShiftLeft:"LSFT",ShiftRight:"RSFT",ControlLeft:"LCTL",ControlRight:"RCTL",AltLeft:"LALT",AltRight:"RALT",MetaLeft:"LGUI",MetaRight:"RGUI"};
+
+const state = {layer:0, idx:[0,0,0,0], res:[[],[],[],[]]};
+try { const s = JSON.parse(localStorage.getItem("lily58-reader")); if (s && s.res) Object.assign(state, s); } catch {}
+window.keyReader = state;  // read by Claude via the browser tools
+const syncEl = () => document.getElementById("sync");
+const save = () => {
+  try { localStorage.setItem("lily58-reader", JSON.stringify(state)); } catch {}
+  fetch("/results", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({updated: new Date().toISOString(), layer: state.layer, idx: state.idx, res: state.res})})
+    .then(r => { syncEl().textContent = r.ok ? "Sent to Claude ✓" : "Not sent (server error)"; })
+    .catch(() => { syncEl().textContent = "Not sent: is the Claude session still running?"; });
+};
+
+const board = document.getElementById("board");
+const short = s => s == null ? "" : s.replace(/^KC_/,"").replace(/KC_/g,"");
+function render(){
+  document.getElementById("tabs").innerHTML = [0,1,2,3].map(l => `<button class="${l===state.layer?"on":""}" data-l="${l}">Layer ${l} · ${state.res[l].filter(x=>x!=null).length}/58</button>`).join("");
+  const i = state.idx[state.layer];
+  const done = i >= 58;
+  document.getElementById("prompt").innerHTML = LAYER_HELP[state.layer] + (HOLD[state.layer] ? ` <span style="color:var(--hold);font-weight:600">${HOLD[state.layer].text} on the map below.</span>` : ` <span style="color:var(--hold);font-weight:600">Tags mark the layer keys in the file.</span>`) +
+    `<div style="margin-top:8px">${done ? "<b>Layer complete.</b> Pick the next layer above." : `Key <b>${i+1} of 58</b>. The file says <code>${FILE[state.layer][i]}</code>.`}</div>` +
+    `<div class="controls"><button id="back">← Back</button><button id="skip">Skip (keep file value)</button><button id="none">No output</button><button id="other">Other…</button></div>`;
+  board.innerHTML = POS.map(([x,y],k) => {
+    const got = state.res[state.layer][k], exp = FILE[state.layer][k];
+    let cls = "k"; if (k===i) cls += " target";
+    const isHold = HOLD[state.layer] && HOLD[state.layer].keys.includes(k); if (isHold) cls += " hold";
+    const tag = layerInfo(exp);
+    if (got === "SKIP") cls += " skip"; else if (got != null) cls += same(state.layer,k,got) ? " ok" : " diff";
+    return `<div class="${cls}" data-k="${k}" style="left:${x/16.5*100}%;top:${y/5.4*100}%">${tag ? `<span class="tag ${tag.kind}" title="${tag.help}">${tag.text}</span>` : ""}${isHold ? `<span class="holdlbl">HOLD</span>` : ""}<span class="got">${got==null||got==="SKIP"?"":short(got)}</span><span class="exp">${short(isHold ? FILE[0][k] : exp)}</span></div>`;
+  }).join("");
+  const rows = [];
+  state.res.forEach((L,l) => L.forEach((g,k) => { if (g!=null && g!=="SKIP" && !same(l,k,g)) rows.push(`<tr><td>${l}</td><td>${k}</td><td><code>${FILE[l][k]}</code></td><td><code>${g}</code></td></tr>`); }));
+  document.querySelector("#diffs tbody").innerHTML = rows.join("") || `<tr><td colspan="4" style="color:var(--muted)">None yet.</td></tr>`;
+}
+// A board result "matches" when it equals the file, equals the tap half of a dual-role key, or is what a transparent key falls through to.
+function tapOf(code){ const m = code.match(/^(?:LT\(\d+,|[LR](?:CTL|SFT|ALT|GUI)_T\()(.+)\)$/); return m ? m[1] : code; }
+function same(l,k,got){
+  let exp = FILE[l][k];
+  if (exp === "KC_TRNS") { for (let b=l-1;b>=0;b--) { if (FILE[b][k] !== "KC_TRNS") { exp = FILE[b][k]; break; } } }
+  if (got === "NONE") return exp === "KC_NO" || /^(RGB_|MO\(|KC_TRNS)/.test(exp);
+  return got === exp || got === tapOf(exp);
+}
+function record(v){ const l = state.layer, i = state.idx[l]; if (i >= 58) return; state.res[l][i] = v; state.idx[l] = i+1; save(); render(); }
+
+let held = new Set(), usedWithMod = false;
+addEventListener("keydown", e => {
+  e.preventDefault(); if (e.repeat) return;
+  if (MODS[e.code]) { held.add(e.code); usedWithMod = false; return; }
+  let kc = CODE[e.code] || `UNKNOWN(${e.code||e.key})`;
+  const mods = [...held].map(c => MODS[c]);
+  const sft = mods.find(m => m.endsWith("SFT"));
+  if (sft && SHIFTED[kc] && mods.length === 1) kc = SHIFTED[kc];
+  else for (const m of mods.reverse()) kc = `${m}(${kc})`;
+  usedWithMod = held.size > 0;
+  record(kc);
+}, true);
+addEventListener("keyup", e => {
+  e.preventDefault();
+  if (MODS[e.code]) { if (!usedWithMod && held.size === 1) record(CODE[e.code]); held.delete(e.code); if (!held.size) usedWithMod = false; }
+}, true);
+addEventListener("blur", () => { held.clear(); });
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button,[data-k]"); if (!t) return;
+  if (t.dataset.l) { state.layer = +t.dataset.l; }
+  else if (t.dataset.k) { state.idx[state.layer] = +t.dataset.k; }
+  else if (t.id === "back") { const l = state.layer; state.idx[l] = Math.max(0, state.idx[l]-1); state.res[l][state.idx[l]] = null; }
+  else if (t.id === "skip") return record("SKIP");
+  else if (t.id === "none") return record("NONE");
+  else if (t.id === "other") { const v = prompt("What did this key do? (e.g. 'volume up', 'mission control')"); if (v) return record(`OTHER(${v})`); }
+  save(); render(); t.blur();
+});
+render(); save();
+</script></body></html>
