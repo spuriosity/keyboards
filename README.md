@@ -13,12 +13,23 @@ splitkb.com **Aurora Lily58 rev1**, Elite-C (ATmega32u4) controllers, QMK firmwa
 `lily58.json` started from the 18 Jul 2023 export (`archive/2023-07-18_configurator-export.json`) with the
 layer 3 `RGB_*` keycodes renamed to `RM_*`, since current QMK drives this board's RGB matrix with those.
 
-Layout: Colemak-DH, Ctrl-tap-Backspace on Caps, SpaceFn.
+Layout: Colemak-DH or QWERTY (switchable), Ctrl-tap-Backspace on Caps, SpaceFn.
 
-- Layer 0: base
-- Layer 1: symbols and F-keys (hold left `Bspc` thumb)
-- Layer 2: navigation (hold right `Enter` or `Space` thumb)
-- Layer 3: RGB (hold left `Bspc` thumb + right `Space` thumb)
+- Layer 0: Colemak-DH base
+- Layer 1: QWERTY base (only the letters differ; thumbs, mods and layer keys match layer 0)
+- Layer 2: symbols and F-keys (hold left `Bspc` thumb)
+- Layer 3: navigation (hold right `Enter` or `Space` thumb)
+- Layer 4: RGB and base switching (hold left `Bspc` thumb + right `Space` thumb)
+
+### Switching base layout
+
+Hold both layer thumbs (left `Bspc` + right `Space`), then tap:
+
+- **Q** → QWERTY
+- **C** → Colemak-DH (C is the same key in both layouts)
+
+The choice is saved on the board (`PDF()`), so it survives unplugging.
+QWERTY sits at layer 1, below the symbol/nav layers, so those still work on top of either base.
 
 ## Flashing
 
