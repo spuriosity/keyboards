@@ -38,3 +38,4 @@ and override these defaults.
 - Window keys on the Space layer, tried 2026-10-10 and replaced by F13–F24: Q/E previous/next tab (⌘⇧[ / ⌘⇧]),
   W Mission Control (⌃↑), S app windows (⌃↓), A/D desktop left/right (⌃← / ⌃→), T last app (⌘Tab).
   Could come back as Raycast bindings on F13–F24 instead.
+- Meh (⌃⌥⇧) + key on the Space layer's unbound keys ([ ] \ ' Enter C V B , . /), proposed 2026-10-10, parked.
