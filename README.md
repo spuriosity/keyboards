@@ -9,6 +9,9 @@ Bootloader: Adafruit UF2 (board ID `nRF52840-rotr-v1`), which mounts as a drive 
 | `config/bt60_v2.keymap` | The keymap, reconstructed from the board's firmware on 2026-10-10, plus `Fn`+`U` to unlock ZMK Studio and a SYS layer on right Ctrl. |
 | `config/bt60_v2.conf` | Build options: ZMK Studio, deep sleep after 15 min, lights off when idle. |
 | `src/`, `dts/`, `zephyr/`, `CMakeLists.txt`, `Kconfig` | Custom `&bat_report` behavior that types the battery level. |
+| `tools/dump.sh` | Copy the firmware off the board without flashing. |
+| `tools/extract_keymap.py` | Rebuild keymap bindings from a `CURRENT.UF2` dump (how the original keymap was recovered). |
+| `CLAUDE.md` | Notes for Claude Code sessions: conventions and things learned. |
 | `tools/layout.py` | Generates the layer diagrams in `LAYOUT.md` from the keymap. |
 | `tools/keylog/` | Browser key logger (`python3 server.py 8459`, open `http://localhost:8459`). |
 | `build.sh` / `flash.sh` / `log.sh` | Build firmware, flash it, read the debug log. |
