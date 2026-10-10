@@ -1,0 +1,7 @@
+# Owner/machine-specific notes, never published
+local/
+
+# Generated
+zmk/workspace/
+qmk/*/build/
+.DS_Store
