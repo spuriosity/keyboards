@@ -35,3 +35,6 @@ and override these defaults.
 - Fn layer: replace the PC keys (Insert, Print Screen, Scroll Lock, Pause) with Mac screenshots (⌘⇧3 / ⌘⇧4 / ⌘⇧5).
 - Base: the Menu key does nothing on a Mac; could become right Cmd/Option, or a Meh/Hyper key.
 - Plain F-keys from Space + number: needs the Mac/Karabiner "standard function keys" setting (see LAYOUT.md).
+- Window keys on the Space layer, tried 2026-10-10 and replaced by F13–F24: Q/E previous/next tab (⌘⇧[ / ⌘⇧]),
+  W Mission Control (⌃↑), S app windows (⌃↓), A/D desktop left/right (⌃← / ⌃→), T last app (⌘Tab).
+  Could come back as Raycast bindings on F13–F24 instead.

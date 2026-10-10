@@ -9,7 +9,7 @@ output into the **Layers** section below.
 | Hold | Layer | What it's for |
 |---|---|---|
 | — | **Base** | QWERTY typing. |
-| **Space** | **NAV** (SpaceFn) | Moving around: arrows, word jumps, Page/Home/End on the right hand; windows, tabs and desktops on the left hand; F-keys on the number row. Tap Space for a space. |
+| **Space** | **NAV** (SpaceFn) | Moving around: arrows, word jumps, Page/Home/End on the right hand; F13–F24 on the left hand for your own shortcuts; F1–F12 on the number row. Tap Space for a space. |
 | **Fn** | **RAISE** | F-keys, media, Caps Lock, and the old PC keys (Insert, Print Screen, …). |
 | **Right Ctrl** | **SYS** | Keyboard control: anything that changes the keyboard itself rather than typing. Right Ctrl is no longer a Ctrl key (left Ctrl is). |
 
@@ -35,14 +35,15 @@ Rules of thumb:
 | `Y` / `H` | Page Up / Page Down |
 | `P` / `;` | Home / End |
 | `N` / `M` | Back / forward (⌘[ / ⌘]) |
-| `Q` / `E` | Previous / next tab (⌘⇧[ / ⌘⇧]) |
-| `W` | Mission Control (⌃↑) |
-| `S` | App windows (⌃↓) |
-| `A` / `D` | Desktop left / right (⌃← / ⌃→) |
-| `T` | Last app (⌘Tab) |
+| `Q` `W` `E` `R` `T` | F13 F14 F15 F16 F17 |
+| `A` `S` `D` `F` `G` | F18 F19 F20 F21 F22 |
+| `Z` `X` | F23 F24 |
 | `Tab` | Next window of the same app (⌘`) |
 | `Esc` | `` ` `` |
 | `Backspace` | Delete (forward) |
+
+F13–F24 do nothing on a Mac by default, which makes them clean keys to bind to actions in Raycast
+(window management, app launching, …) or any app's shortcut settings.
 
 Space + Shift + number row, the Mac top-row actions sent as media keys (they work whatever the Mac's F-key setting):
 
@@ -111,9 +112,9 @@ NAV (hold Space): arrows on JKL/IK, word jump on U/O, Cmd+` and Cmd+[ / Cmd+].
 
 ```
    `      F1      F2      F3      F4      F5      F6      F7      F8      F9      F10     F11     F12     Del
-  ⌘`      ⌘⇧[     ⌃↑      ⌘⇧]      ·     ⌘Tab    PgUp     ⌥←       ↑      ⌥→     Home      ·       ·       ·
-   ·      ⌃←      ⌃↓      ⌃→       ·       ·     PgDn      ←       ↓       →      End      ·       ·
-   ·       ·       ·       ·       ·       ·      ⌘[      ⌘]       ·       ·       ·       ·
+  ⌘`      F13     F14     F15     F16     F17    PgUp     ⌥←       ↑      ⌥→     Home      ·       ·       ·
+   ·      F18     F19     F20     F21     F22    PgDn      ←       ↓       →      End      ·       ·
+   ·      F23     F24      ·       ·       ·      ⌘[      ⌘]       ·       ·       ·       ·
    ·       ·       ·       ·       ·       ·       ·       ·
 ```
 
