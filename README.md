@@ -67,7 +67,8 @@ The stock BT60 V2 config never sleeps and turns the underglow on at start-up, wh
 
 ## Layers
 
-- **Base**: QWERTY. Esc on tap, `` ` `` on hold (top-left). Bottom row: Ctrl, Alt, Cmd, Space, RAlt, Fn, Menu, RCtrl.
+- **Base**: QWERTY. Esc on tap, `` ` `` on hold (top-left). Caps Lock key: Backspace on tap, Ctrl on hold
+  (tap then hold to repeat Backspace). Bottom row: Ctrl, Alt, Cmd, Space, RAlt, Fn, Menu, RCtrl.
 - **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`U` unlocks ZMK Studio.
 - **SYS** (hold right Ctrl, which is no longer a Ctrl key): `1`-`5` = Bluetooth device 1-5, Backspace = bootloader,
   `\` = next Bluetooth device,
