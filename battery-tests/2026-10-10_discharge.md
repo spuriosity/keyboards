@@ -52,3 +52,19 @@ batlog every 10min, 41 readings, mV: 4146 3988 3958 3936 3912 3886 3864 3846 381
 | 6h20 | 2650 |
 | 6h30 | 2414 |
 | 6h40 | 2894 |
+
+## Reading it
+
+- **0h00 → 0h10, 4146 → 3988 mV**: the load (underglow) pulling the voltage down plus surface charge settling. Normal.
+- **0h10 → 5h20, 3988 → 3538 mV**: a steady, even slope, the long middle part of a lithium cell's discharge.
+- **5h30 onwards**: the knee. The cell is empty and the voltage falls fast (3450 → 2414 mV in 70 minutes).
+- **Last reading, 2894 mV**: higher than the one before, so the load dropped out (LEDs browning out, or a reset)
+  and the voltage bounced back. The useful run ended around 6h40.
+
+**Verdict:** the battery works and the curve has a normal, healthy shape. There's no early collapse or large sag
+of the kind a worn cell shows. About 5.5 hours to empty (~3.45 V, where ZMK reports 0%) and ~6.5 hours until
+it gave out, at the board's heaviest load. Without knowing the exact load current or the cell's rated capacity this
+can't be turned into a precise "% health", but a worn-out cell would not have lasted this long under full underglow.
+
+**Caution:** the cell was taken down to ~2.4 V under load, well below the ~3.0 V lithium cells should stop at.
+Recharge it promptly, and don't repeat full-to-empty tests often.
