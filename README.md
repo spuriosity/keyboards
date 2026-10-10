@@ -7,6 +7,9 @@ splitkb.com **Aurora Lily58 rev1**, Elite-C (ATmega32u4) controllers, QMK firmwa
 | `lily58.json` | The working keymap. Import into [QMK Configurator](https://config.qmk.fm/#/splitkb/aurora/lily58/rev1/LAYOUT), edit, export back over this file. |
 | `archive/` | Original 2023 Configurator exports, kept unchanged. |
 | `firmware/` | Exact `.hex` files that were flashed to the board, named by date and the commit they were built from. |
+| `build.sh` / `flash.sh` | Compile `lily58.json` with QMK's API; flash both halves with dfu-programmer. |
+| `tools/read_firmware.sh` / `tools/extract_keymap.py` | Read the firmware off a half; turn a dump back into a keymap JSON. |
+| `CLAUDE.md` | Notes for Claude Code sessions. |
 | `tools/key-reader/` | Browser page that records what each physical key sends. Run `python3 server.py 8458` and open `http://localhost:8458/keytester.html`; results land in `results.json`. |
 
 ## Base
@@ -34,9 +37,12 @@ QWERTY sits at layer 1, below the symbol/nav layers, so those still work on top 
 
 ## Flashing
 
-1. Configurator: **Compile**, then **Firmware** to download the `.hex`.
-2. QMK Toolbox: open the `.hex`, tick **Auto-Flash**.
-3. Press reset on the USB-connected half, then move the cable and do the other half.
+```
+./build.sh     # compile lily58.json via QMK's API -> build/*.hex
+./flash.sh     # then press reset on the USB-connected half; move the cable and reset the other half
+```
+
+Or by hand: Configurator **Compile** → **Firmware**, then QMK Toolbox with **Auto-Flash**.
 
 The firmware flashed before Oct 2026 had the Atmel DFU security bit set, so it couldn't be read back.
 Flashing with `dfu-programmer` (erase, flash, launch) leaves the bit clear, and the Oct 2026 flash read back
