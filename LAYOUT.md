@@ -74,7 +74,7 @@ unless "Use F1, F2, etc. keys as standard function keys" is on, globally or for 
 | `Esc` | Clear the current Bluetooth device's pairing |
 | `Enter` | Switch typing between USB and Bluetooth |
 | `Backspace` | Bootloader, for flashing (`./flash.sh`). No keys work until it's flashed or power-cycled |
-| `Right Shift` | Type the battery level, e.g. `94% 4148mV` |
+| `Right Shift` | Type the battery level, where typing is going and whether it's plugged in, e.g. `94% 4148mV, typing over bluetooth 1, on battery` |
 | `U` | Unlock ZMK Studio for editing at <https://zmk.studio> |
 | `K` | Key backlight on/off |
 | `L` | Underglow on/off |

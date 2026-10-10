@@ -1,6 +1,9 @@
 /*
- * Battery report behavior: on press, reads the battery sensor (zmk,battery) and types
- * "<percent>% <millivolts>mV", or "battery error" if the sensor can't be read.
+ * Battery report behavior: on press, reads the battery sensor (zmk,battery) and types the level, where typing
+ * is going, and whether USB power is connected, e.g.
+ *   "94% 4148mV, typing over usb, plugged in"
+ *   "81% 3932mV, typing over bluetooth 2, on battery"
+ * or "battery error <n>" if the sensor can't be read.
  *
  * SPDX-License-Identifier: MIT
  */
@@ -12,6 +15,10 @@
 
 #include <drivers/behavior.h>
 
+#include <zmk/ble.h>
+#include <zmk/endpoints.h>
+#include <zmk/usb.h>
+
 #include "bt60_battery.h"
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -20,16 +27,26 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
                                      struct zmk_behavior_binding_event event) {
-    char text[32];
-    int percent, millivolts;
+    char text[64];
+    int percent, millivolts, len;
     int rc = bt60_read_battery(&percent, &millivolts);
 
     if (rc) {
         LOG_ERR("Battery read failed: %d", rc);
-        snprintf(text, sizeof(text), "battery error %d", -rc);
+        len = snprintf(text, sizeof(text), "battery error %d", -rc);
     } else {
-        snprintf(text, sizeof(text), "%d%% %dmV", percent, millivolts);
+        len = snprintf(text, sizeof(text), "%d%% %dmV", percent, millivolts);
     }
+
+    struct zmk_endpoint_instance endpoint = zmk_endpoints_selected();
+    if (endpoint.transport == ZMK_TRANSPORT_USB) {
+        len += snprintf(&text[len], sizeof(text) - len, ", typing over usb");
+    } else {
+        len += snprintf(&text[len], sizeof(text) - len, ", typing over bluetooth %d%s",
+                        endpoint.ble.profile_index + 1,
+                        zmk_ble_active_profile_is_connected() ? "" : " not connected");
+    }
+    snprintf(&text[len], sizeof(text) - len, ", %s", zmk_usb_is_powered() ? "plugged in" : "on battery");
     bt60_type(&event, text, sizeof(text));
     return ZMK_BEHAVIOR_OPAQUE;
 }

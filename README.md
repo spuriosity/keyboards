@@ -49,7 +49,8 @@ The shared build environment lives in `../workspace` (ZMK v0.3, Zephyr 3.5, Zeph
 ## Battery
 
 The board has a battery voltage sensor (resistor divider into the nRF52840's ADC, `vbatt` in ZMK's `ckp.dtsi`).
-Hold right Ctrl + tap right Shift to type the level and voltage. A charged cell reads about 3700-4200 mV; on USB
+Hold right Ctrl + tap right Shift to type the level and voltage, plus whether typing goes over USB or Bluetooth
+and whether it's plugged in. A charged cell reads about 3700-4200 mV; on USB
 the charger can make a missing or dead cell read high, so test unplugged over Bluetooth. ZMK also reports the level
 to paired hosts over Bluetooth. First reading (2026-10-10, on USB): `94% 4148mV`.
 
