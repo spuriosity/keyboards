@@ -28,5 +28,4 @@ and override these defaults.
 
 ## Other ideas
 
-- USB / Bluetooth output switch (`&out OUT_TOG`), so the board can type over Bluetooth while charging.
-- After the battery test: decide what right Ctrl + Enter should do (it currently types the battery log).
+- Low-battery warning (brief red underglow flash under ~20%) and a protective auto power-off at ~3.3 V.

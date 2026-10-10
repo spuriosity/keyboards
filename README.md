@@ -58,8 +58,9 @@ The board has no fuel gauge, only a voltage sensor, so health shows up in the di
 1. `./build.sh battest && ./flash.sh firmware/bt60_v2-battest.uf2`, then charge fully.
 2. Unplug. A fresh log starts: a voltage reading every 10 minutes, saved to flash after each one (it survives the
    battery running flat). Deep sleep and idle light-off are off and the underglow stays on as a steady load.
-3. Plug back in (logging stops) and hold right Ctrl + tap Enter in a text box to type the log.
-4. Flash the normal firmware back. The log stays in flash, and right Ctrl + Enter still types it.
+3. Plug back in (logging stops). Don't unplug again first: that starts a fresh log.
+   Hold right Ctrl + tap Enter in a text box to type the log (in the battest build only).
+4. Flash the normal firmware back. Results so far are in `battery-tests/`.
 
 The stock BT60 V2 config never sleeps and turns the underglow on at start-up, which drains the battery.
 `config/bt60_v2.conf` turns on deep sleep (15 min idle, any key wakes) and idle light-off.
@@ -70,7 +71,8 @@ The stock BT60 V2 config never sleeps and turns the underglow on at start-up, wh
 - **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`U` unlocks ZMK Studio.
 - **SYS** (hold right Ctrl, which is no longer a Ctrl key): `1`-`5` = Bluetooth device 1-5, Backspace = bootloader,
   `\` = next Bluetooth device,
-  right Shift = type the battery level (e.g. `94% 4148mV`). Enter is spare.
+  right Shift = type the battery level (e.g. `94% 4148mV`), Enter = switch typing between USB and Bluetooth
+  (e.g. to type over Bluetooth while charging).
 - **NAV** (hold Space): arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
   `Cmd+`` ` on Tab, `Cmd+[` / `Cmd+]` on `N` / `M`.
 

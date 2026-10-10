@@ -8,12 +8,13 @@
  *
  * ZMK Studio: hold Fn and tap U to unlock the keyboard for editing at https://zmk.studio
  * Right Ctrl is a SYS key (no longer Ctrl): hold it, then 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
- * right Shift = type battery level, Enter = type the battery discharge log.
+ * Enter = switch between USB and Bluetooth, right Shift = type battery level.
  */
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/backlight.h>
 
@@ -81,12 +82,12 @@
         };
 
         // SYS (hold right Ctrl): 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
-        // Enter = type the battery discharge log, right Shift = type battery level.
+        // Enter = switch between USB and Bluetooth, right Shift = type battery level.
         sys {
             bindings = <
                 &trans       &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bootloader
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bt BT_NXT
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bat_log
+                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &out OUT_TOG
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bat_report
                 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
             >;
