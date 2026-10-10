@@ -73,7 +73,9 @@ The stock BT60 V2 config never sleeps and turns the underglow on at start-up, wh
   `\` = next Bluetooth device,
   right Shift = type the battery level (e.g. `94% 4148mV`), Enter = switch typing between USB and Bluetooth
   (e.g. to type over Bluetooth while charging).
-- **NAV** (hold Space): arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
+- **NAV** (hold Space, SpaceFn): number row = plain F1–F12; add Shift for the Mac actions
+  (1/2 brightness, 3 Mission Control, 4 Spotlight, 5/6 key backlight, 7/8/9 media, 0 mute, -/= volume).
+  Arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
   `Cmd+`` ` on Tab, `Cmd+[` / `Cmd+]` on `N` / `M`.
 
 ## Reading the firmware back

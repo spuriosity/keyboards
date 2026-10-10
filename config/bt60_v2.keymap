@@ -42,6 +42,102 @@
             #binding-cells = <0>;
             display-name = "Battery log";
         };
+
+        // F1, or with Shift: brightness down
+        mac_f1: mac_f1 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F1>, <&kp C_BRI_DN>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F2, or with Shift: brightness up
+        mac_f2: mac_f2 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F2>, <&kp C_BRI_UP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F3, or with Shift: Mission Control
+        mac_f3: mac_f3 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F3>, <&kp LC(UP)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F4, or with Shift: Spotlight
+        mac_f4: mac_f4 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F4>, <&kp LG(SPACE)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F5, or with Shift: key backlight down
+        mac_f5: mac_f5 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F5>, <&bl BL_DEC>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F6, or with Shift: key backlight up
+        mac_f6: mac_f6 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F6>, <&bl BL_INC>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F7, or with Shift: previous track
+        mac_f7: mac_f7 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F7>, <&kp C_PREV>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F8, or with Shift: play/pause
+        mac_f8: mac_f8 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F8>, <&kp C_PP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F9, or with Shift: next track
+        mac_f9: mac_f9 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F9>, <&kp C_NEXT>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F10, or with Shift: mute
+        mac_f10: mac_f10 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F10>, <&kp C_MUTE>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F11, or with Shift: volume down
+        mac_f11: mac_f11 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F11>, <&kp C_VOL_DN>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F12, or with Shift: volume up
+        mac_f12: mac_f12 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F12>, <&kp C_VOL_UP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
     };
 
 
@@ -71,9 +167,11 @@
         };
 
         // NAV (hold Space): arrows on JKL/IK, word jump on U/O, Cmd+` and Cmd+[ / Cmd+].
+        // Number row: plain F1-F12; with Shift, the Mac actions (brightness, Mission Control, Spotlight,
+        // key backlight, media, volume).
         nav {
             bindings = <
-                &kp GRAVE     &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6       &kp F7       &kp F8   &kp F9        &kp F10  &kp F11 &kp F12 &kp DEL
+                &kp GRAVE     &mac_f1 &mac_f2 &mac_f3 &mac_f4 &mac_f5 &mac_f6       &mac_f7       &mac_f8   &mac_f9        &mac_f10  &mac_f11 &mac_f12 &kp DEL
                 &kp LG(GRAVE) &trans &trans &trans &trans &trans &kp PG_UP    &kp LA(LEFT) &kp UP   &kp LA(RIGHT) &kp HOME &trans  &trans  &trans
                 &trans        &trans &trans &trans &trans &trans &kp PG_DN    &kp LEFT     &kp DOWN &kp RIGHT     &kp END  &trans  &trans
                 &trans        &trans &trans &trans &trans &trans &kp LG(LBKT) &kp LG(RBKT) &trans   &trans        &trans   &trans
