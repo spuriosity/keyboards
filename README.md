@@ -5,9 +5,11 @@ Bootloader: Adafruit UF2 (board ID `nRF52840-rotr-v1`), which mounts as a drive 
 
 | File | What it is |
 |---|---|
+| `LAYOUT.md` | What every key does, by layer. |
 | `config/bt60_v2.keymap` | The keymap, reconstructed from the board's firmware on 2026-10-10, plus `Fn`+`U` to unlock ZMK Studio and a SYS layer on right Ctrl. |
 | `config/bt60_v2.conf` | Build options: ZMK Studio, deep sleep after 15 min, lights off when idle. |
 | `src/`, `dts/`, `zephyr/`, `CMakeLists.txt`, `Kconfig` | Custom `&bat_report` behavior that types the battery level. |
+| `tools/layout.py` | Generates the layer diagrams in `LAYOUT.md` from the keymap. |
 | `tools/keylog/` | Browser key logger (`python3 server.py 8459`, open `http://localhost:8459`). |
 | `build.sh` / `flash.sh` / `log.sh` | Build firmware, flash it, read the debug log. |
 | `firmware/` | Built `.uf2` files. |
@@ -22,7 +24,7 @@ Once the Studio firmware is on the board:
 
 1. Plug the BT60 in over USB.
 2. Open <https://zmk.studio> in Arc (it needs a Chromium browser for Web Serial) and connect to the BT60.
-3. Hold `Fn` and tap `U` to unlock the keyboard for editing.
+3. Hold right Ctrl and tap `U` to unlock the keyboard for editing.
 4. Change keys and click **Save**. Changes apply immediately and survive restarts. No rebuild needed.
 
 Studio stores its edits on the keyboard, not in `config/bt60_v2.keymap`. To make the file the source of truth again,
@@ -65,19 +67,9 @@ The board has no fuel gauge, only a voltage sensor, so health shows up in the di
 The stock BT60 V2 config never sleeps and turns the underglow on at start-up, which drains the battery.
 `config/bt60_v2.conf` turns on deep sleep (15 min idle, any key wakes) and idle light-off.
 
-## Layers
+## Layout
 
-- **Base**: QWERTY. Esc on tap, `` ` `` on hold (top-left). Caps Lock key: Backspace on tap, Ctrl on hold
-  (tap then hold to repeat Backspace). Bottom row: Ctrl, Alt, Cmd, Space, RAlt, Fn, Menu, RCtrl.
-- **RAISE** (hold Fn): F-keys, Bluetooth profiles, media, backlight and RGB. `Fn`+`U` unlocks ZMK Studio.
-- **SYS** (hold right Ctrl, which is no longer a Ctrl key): `1`-`5` = Bluetooth device 1-5, Backspace = bootloader,
-  `\` = next Bluetooth device,
-  right Shift = type the battery level (e.g. `94% 4148mV`), Enter = switch typing between USB and Bluetooth
-  (e.g. to type over Bluetooth while charging).
-- **NAV** (hold Space, SpaceFn): number row = plain F1–F12; add Shift for the Mac actions
-  (1/2 brightness, 3 Mission Control, 4 Spotlight, 5/6 key backlight, 7/8/9 media, 0 mute, -/= volume).
-  Arrows on `J K L` / `I`, word jump (`Alt+←/→`) on `U` / `O`, Page Up/Down and Home/End around them,
-  `Cmd+`` ` on Tab, `Cmd+[` / `Cmd+]` on `N` / `M`.
+See [LAYOUT.md](LAYOUT.md) for every layer and what each key does.
 
 ## Reading the firmware back
 

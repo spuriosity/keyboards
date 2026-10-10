@@ -1,14 +1,15 @@
 /*
  * Polarity Works BT60 V2 (CKP controller, nRF52840), ANSI layout. ZMK v0.3 board: bt60_v2.
  *
- * Reconstructed 2026-10-10 from the firmware on the board (dumps/2026-10-10_CURRENT.UF2).
- * Bindings are decoded from the compiled keymap table, so this matches the board exactly;
- * layer names and comments come from archive/2025-05-28_bt60.keymap.
+ * Reconstructed 2026-10-10 from the firmware on the board (dumps/2026-10-10_CURRENT.UF2) and built on since.
  * The board build includes an encoder binding (volume); it is left out because there is no knob.
  *
- * ZMK Studio: hold Fn and tap U to unlock the keyboard for editing at https://zmk.studio
- * Right Ctrl is a SYS key (no longer Ctrl): hold it, then 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
- * Enter = switch between USB and Bluetooth, right Shift = type battery level.
+ * Layers (diagrams in LAYOUT.md, regenerate with tools/layout.py):
+ *   Base   QWERTY. Caps Lock key = Backspace on tap, Ctrl on hold.
+ *   NAV    hold Space (SpaceFn): F-keys (Mac actions with Shift), arrows and navigation.
+ *   RAISE  hold Fn: F-keys, media, Caps Lock.
+ *   SYS    hold right Ctrl: keyboard control (Bluetooth, USB/BT output, bootloader, battery, Studio, lights).
+ *          Right Ctrl is no longer a Ctrl key.
  */
 
 #include <behaviors.dtsi>
@@ -86,21 +87,7 @@
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
-        // F5, or with Shift: key backlight down
-        mac_f5: mac_f5 {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp F5>, <&bl BL_DEC>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
 
-        // F6, or with Shift: key backlight up
-        mac_f6: mac_f6 {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp F6>, <&bl BL_INC>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
 
         // F7, or with Shift: previous track
         mac_f7: mac_f7 {
@@ -166,39 +153,41 @@
             >;
         };
 
-        // RAISE (hold Fn): F-keys, Bluetooth, media, backlight/RGB, Fn+U = unlock ZMK Studio.
+        // RAISE (hold Fn): F-keys, media, Caps Lock, Insert/Print Screen/Scroll Lock/Pause.
         raise {
             bindings = <
-                &bt BT_CLR &kp F1       &kp F2       &kp F3     &kp F4     &kp F5     &kp F6     &kp F7     &kp F8  &kp F9  &kp F10   &kp F11    &kp F12         &kp DEL
-                &trans     &trans       &kp UP       &trans     &trans     &trans     &trans     &studio_unlock &kp INS &trans  &kp PSCRN &kp SLCK   &kp PAUSE_BREAK &rgb_ug RGB_TOG
-                &kp CAPS   &kp LEFT     &kp DOWN     &kp RIGHT  &trans     &trans     &trans     &trans     &trans  &trans  &kp HOME  &kp PG_UP  &trans
-                &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_MUTE &bl BL_INC &bl BL_DEC &trans     &trans     &trans  &kp END &kp PG_DN &bl BL_TOG
-                &bt BT_PRV &bt BT_NXT   &trans       &trans     &trans     &trans     &trans     &bt BT_CLR
+                &trans     &kp F1       &kp F2       &kp F3     &kp F4 &kp F5 &kp F6 &kp F7 &kp F8  &kp F9  &kp F10   &kp F11   &kp F12         &kp DEL
+                &trans     &trans       &kp UP       &trans     &trans &trans &trans &trans &kp INS &trans  &kp PSCRN &kp SLCK  &kp PAUSE_BREAK &trans
+                &kp CAPS   &kp LEFT     &kp DOWN     &kp RIGHT  &trans &trans &trans &trans &trans  &trans  &kp HOME  &kp PG_UP &trans
+                &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_MUTE &trans &trans &trans &trans &trans  &kp END &kp PG_DN &trans
+                &trans     &trans       &trans       &trans     &trans &trans &trans &trans
             >;
         };
 
         // NAV (hold Space): arrows on JKL/IK, word jump on U/O, Cmd+` and Cmd+[ / Cmd+].
-        // Number row: plain F1-F12; with Shift, the Mac actions (brightness, Mission Control, Spotlight,
-        // key backlight, media, volume).
+        // Number row: plain F1-F12; with Shift, the Mac actions (brightness, Mission Control, Spotlight, media, volume).
+        // Left hand, windows: Q/E = previous/next tab, W = Mission Control, S = app windows, A/D = desktop left/right,
+        // T = last app (Cmd+Tab), Tab = next window of the same app (Cmd+`).
         nav {
             bindings = <
-                &kp GRAVE     &mac_f1 &mac_f2 &mac_f3 &mac_f4 &mac_f5 &mac_f6       &mac_f7       &mac_f8   &mac_f9        &mac_f10  &mac_f11 &mac_f12 &kp DEL
-                &kp LG(GRAVE) &trans &trans &trans &trans &trans &kp PG_UP    &kp LA(LEFT) &kp UP   &kp LA(RIGHT) &kp HOME &trans  &trans  &trans
-                &trans        &trans &trans &trans &trans &trans &kp PG_DN    &kp LEFT     &kp DOWN &kp RIGHT     &kp END  &trans  &trans
-                &trans        &trans &trans &trans &trans &trans &kp LG(LBKT) &kp LG(RBKT) &trans   &trans        &trans   &trans
-                &trans        &trans &trans &trans &trans &trans &trans       &trans
+                &kp GRAVE     &mac_f1          &mac_f2      &mac_f3          &mac_f4 &kp F5      &kp F6       &mac_f7      &mac_f8  &mac_f9       &mac_f10 &mac_f11 &mac_f12 &kp DEL
+                &kp LG(GRAVE) &kp LG(LS(LBKT)) &kp LC(UP)   &kp LG(LS(RBKT)) &trans  &kp LG(TAB) &kp PG_UP    &kp LA(LEFT) &kp UP   &kp LA(RIGHT) &kp HOME &trans   &trans   &trans
+                &trans        &kp LC(LEFT)     &kp LC(DOWN) &kp LC(RIGHT)    &trans  &trans      &kp PG_DN    &kp LEFT     &kp DOWN &kp RIGHT     &kp END  &trans   &trans
+                &trans        &trans           &trans       &trans           &trans  &trans      &kp LG(LBKT) &kp LG(RBKT) &trans   &trans        &trans   &trans
+                &trans        &trans           &trans       &trans           &trans  &trans      &trans       &trans
             >;
         };
 
-        // SYS (hold right Ctrl): 1-5 = Bluetooth device 1-5, Backspace = bootloader, \ = next Bluetooth device,
-        // Enter = switch between USB and Bluetooth, right Shift = type battery level.
+        // SYS (hold right Ctrl): keyboard control. 1-5 = Bluetooth device, ] / \ = previous / next device,
+        // Esc = clear current device's pairing, Enter = USB/Bluetooth, Backspace = bootloader,
+        // right Shift = type battery level, U = unlock ZMK Studio, K = key backlight on/off, L = underglow on/off.
         sys {
             bindings = <
-                &trans       &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bootloader
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bt BT_NXT
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &out OUT_TOG
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &bat_report
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
+                &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans &trans         &trans     &trans          &trans &trans      &trans       &bootloader
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &studio_unlock &trans     &trans          &trans &trans      &bt BT_PRV   &bt BT_NXT
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans         &bl BL_TOG &rgb_ug RGB_TOG &trans &trans      &out OUT_TOG
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans         &trans     &trans          &trans &bat_report
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans
             >;
         };
     };

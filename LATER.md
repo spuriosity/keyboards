@@ -29,3 +29,9 @@ and override these defaults.
 ## Other ideas
 
 - Low-battery warning (brief red underglow flash under ~20%) and a protective auto power-off at ~3.3 V.
+- Space layer, Mac line navigation: swap Home/End for ⌘← / ⌘→ (Home/End scroll the document in most Mac apps),
+  and add ⌘↑ / ⌘↓ for top/bottom of the document.
+- Space layer, editing keys on the left hand: delete word (⌥⌫), delete to line start (⌘⌫), undo/redo, cut/copy/paste.
+- Fn layer: replace the PC keys (Insert, Print Screen, Scroll Lock, Pause) with Mac screenshots (⌘⇧3 / ⌘⇧4 / ⌘⇧5).
+- Base: the Menu key does nothing on a Mac; could become right Cmd/Option, or a Meh/Hyper key.
+- Plain F-keys from Space + number: needs the Mac/Karabiner "standard function keys" setting (see LAYOUT.md).
