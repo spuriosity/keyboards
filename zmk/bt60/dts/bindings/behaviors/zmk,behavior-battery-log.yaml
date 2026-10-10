@@ -1,0 +1,5 @@
+description: Types the saved battery discharge log (see src/battery_log.c)
+
+compatible: "zmk,behavior-battery-log"
+
+include: zero_param.yaml

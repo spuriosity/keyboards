@@ -1,0 +1,6 @@
+# Makes this config folder a Zephyr module so ZMK picks up the custom behavior in src/.
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    dts_root: .

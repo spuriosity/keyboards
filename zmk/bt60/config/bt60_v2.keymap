@@ -1,0 +1,194 @@
+/*
+ * Polarity Works BT60 V2 (CKP controller, nRF52840), ANSI layout. ZMK v0.3 board: bt60_v2.
+ *
+ * Reconstructed 2026-10-10 from the firmware on the board (dumps/2026-10-10_CURRENT.UF2) and built on since.
+ * The board build includes an encoder binding (volume); it is left out because there is no knob.
+ *
+ * Layers (diagrams in LAYOUT.md, regenerate with tools/layout.py):
+ *   Base   QWERTY. Caps Lock key = Backspace on tap, Ctrl on hold.
+ *   NAV    hold Space (SpaceFn): F1-F12 (Mac actions with Shift), F13-F24 on the left hand, arrows and navigation.
+ *   RAISE  hold Fn: F-keys, media, Caps Lock.
+ *   SYS    hold right Ctrl: keyboard control (Bluetooth, USB/BT output, bootloader, battery, Studio, lights).
+ *          Right Ctrl is no longer a Ctrl key.
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/rgb.h>
+#include <dt-bindings/zmk/backlight.h>
+
+#define BASE  0
+#define RAISE 1
+#define NAV   2
+#define SYS   3
+
+/ {
+    chosen {
+        zmk,physical-layout = &layout_60_ansi;
+    };
+
+    behaviors {
+        // Caps Lock position: tap = Backspace, hold = Ctrl. Tap then hold quickly to repeat Backspace.
+        ctl_bspc: ctl_bspc {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <175>;
+            bindings = <&kp>, <&kp>;
+            display-name = "Ctrl / Backspace";
+        };
+
+        // Types the battery level and voltage, e.g. "87% 4012mV" (src/behavior_battery_report.c).
+        bat_report: battery_report {
+            compatible = "zmk,behavior-battery-report";
+            #binding-cells = <0>;
+            display-name = "Battery report";
+        };
+
+        // Types the saved battery discharge log (src/battery_log.c).
+        bat_log: battery_log {
+            compatible = "zmk,behavior-battery-log";
+            #binding-cells = <0>;
+            display-name = "Battery log";
+        };
+
+        // F1, or with Shift: brightness down
+        mac_f1: mac_f1 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F1>, <&kp C_BRI_DN>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F2, or with Shift: brightness up
+        mac_f2: mac_f2 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F2>, <&kp C_BRI_UP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F3, or with Shift: Mission Control
+        mac_f3: mac_f3 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F3>, <&kp LC(UP)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F4, or with Shift: Spotlight
+        mac_f4: mac_f4 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F4>, <&kp LG(SPACE)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+
+
+        // F7, or with Shift: previous track
+        mac_f7: mac_f7 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F7>, <&kp C_PREV>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F8, or with Shift: play/pause
+        mac_f8: mac_f8 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F8>, <&kp C_PP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F9, or with Shift: next track
+        mac_f9: mac_f9 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F9>, <&kp C_NEXT>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F10, or with Shift: mute
+        mac_f10: mac_f10 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F10>, <&kp C_MUTE>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F11, or with Shift: volume down
+        mac_f11: mac_f11 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F11>, <&kp C_VOL_DN>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        // F12, or with Shift: volume up
+        mac_f12: mac_f12 {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F12>, <&kp C_VOL_UP>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+    };
+
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        // Base (QWERTY). Esc on tap, ` on hold. Caps Lock key: Backspace on tap, Ctrl on hold. Hold Space for NAV, Fn for RAISE, right Ctrl for SYS.
+        default_layer {
+            bindings = <
+                &mt GRAVE ESC &kp N1   &kp N2   &kp N3        &kp N4   &kp N5    &kp N6     &kp N7    &kp N8    &kp N9  &kp N0   &kp MINUS &kp EQUAL &kp BSPC
+                &kp TAB       &kp Q    &kp W    &kp E         &kp R    &kp T     &kp Y      &kp U     &kp I     &kp O   &kp P    &kp LBKT  &kp RBKT  &kp BSLH
+                &ctl_bspc LCTRL BSPC     &kp A    &kp S    &kp D         &kp F    &kp G     &kp H      &kp J     &kp K     &kp L   &kp SEMI &kp SQT   &kp RET
+                &kp LSHFT     &kp Z    &kp X    &kp C         &kp V    &kp B     &kp N      &kp M     &kp COMMA &kp DOT &kp FSLH &kp RSHFT
+                &kp LCTRL     &kp LALT &kp LGUI &lt NAV SPACE &kp RALT &mo RAISE &kp C_MENU &mo SYS
+            >;
+        };
+
+        // RAISE (hold Fn): F-keys, media, Caps Lock, Insert/Print Screen/Scroll Lock/Pause.
+        raise {
+            bindings = <
+                &trans     &kp F1       &kp F2       &kp F3     &kp F4 &kp F5 &kp F6 &kp F7 &kp F8  &kp F9  &kp F10   &kp F11   &kp F12         &kp DEL
+                &trans     &trans       &kp UP       &trans     &trans &trans &trans &trans &kp INS &trans  &kp PSCRN &kp SLCK  &kp PAUSE_BREAK &trans
+                &kp CAPS   &kp LEFT     &kp DOWN     &kp RIGHT  &trans &trans &trans &trans &trans  &trans  &kp HOME  &kp PG_UP &trans
+                &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_MUTE &trans &trans &trans &trans &trans  &kp END &kp PG_DN &trans
+                &trans     &trans       &trans       &trans     &trans &trans &trans &trans
+            >;
+        };
+
+        // NAV (hold Space): arrows on JKL/IK, word jump on U/O, Cmd+` and Cmd+[ / Cmd+].
+        // Number row: plain F1-F12; with Shift, the Mac actions (brightness, Mission Control, Spotlight, media, volume).
+        // Left hand: F13-F24 for binding in Raycast etc. (Q-T = F13-F17, A-G = F18-F22, Z X = F23 F24).
+        // Tab = next window of the same app (Cmd+`).
+        nav {
+            bindings = <
+                &kp GRAVE     &mac_f1 &mac_f2 &mac_f3 &mac_f4 &kp F5  &kp F6       &mac_f7      &mac_f8  &mac_f9       &mac_f10 &mac_f11 &mac_f12 &kp DEL
+                &kp LG(GRAVE) &kp F13 &kp F14 &kp F15 &kp F16 &kp F17 &kp PG_UP    &kp LA(LEFT) &kp UP   &kp LA(RIGHT) &kp HOME &trans   &trans   &trans
+                &trans        &kp F18 &kp F19 &kp F20 &kp F21 &kp F22 &kp PG_DN    &kp LEFT     &kp DOWN &kp RIGHT     &kp END  &trans   &trans
+                &trans        &kp F23 &kp F24 &trans  &trans  &trans  &kp LG(LBKT) &kp LG(RBKT) &trans   &trans        &trans   &trans
+                &trans        &trans  &trans  &trans  &trans  &trans  &trans       &trans
+            >;
+        };
+
+        // SYS (hold right Ctrl): keyboard control. 1-5 = Bluetooth device, ] / \ = previous / next device,
+        // Esc = clear current device's pairing, Enter = USB/Bluetooth, Backspace = bootloader,
+        // right Shift = type battery level, U = unlock ZMK Studio, K = key backlight on/off, L = underglow on/off.
+        sys {
+            bindings = <
+                &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans &trans         &trans     &trans          &trans &trans      &trans       &bootloader
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &studio_unlock &trans     &trans          &trans &trans      &bt BT_PRV   &bt BT_NXT
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans         &bl BL_TOG &rgb_ug RGB_TOG &trans &trans      &out OUT_TOG
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans         &trans     &trans          &trans &bat_report
+                &trans     &trans       &trans       &trans       &trans       &trans       &trans &trans
+            >;
+        };
+    };
+};

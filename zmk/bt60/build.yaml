@@ -1,0 +1,4 @@
+# Same targets as build.sh, for ZMK's GitHub Actions workflow if this ever moves to GitHub.
+include:
+  - board: bt60_v2
+    snippet: studio-rpc-usb-uart
